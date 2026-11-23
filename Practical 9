@@ -1,0 +1,68 @@
+
+#include <stdio.h>
+#include <limits.h>
+
+int main() {
+    int graph[100][100];
+    int key[100], parent[100], visited[100] = {0};
+    int n, min, u, total = 0;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > 100) {
+        printf("Invalid number of vertices");
+        return 0;
+    }
+
+    printf("Enter adjacency matrix (0 for no edge):\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            scanf("%d", &graph[i][j]);
+    }
+
+    for (int i = 0; i < n; i++) {
+        key[i] = INT_MAX;
+        parent[i] = -1;
+    }
+
+    key[0] = 0;
+
+    for (int count = 0; count < n; count++) {
+        min = INT_MAX;
+        u = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (!visited[i] && key[i] < min) {
+                min = key[i];
+                u = i;
+            }
+        }
+
+        if (u == -1) {
+            printf("Graph is disconnected");
+            return 0;
+        }
+
+        visited[u] = 1;
+
+        for (int v = 0; v < n; v++) {
+            if (graph[u][v] != 0 && !visited[v] &&
+                graph[u][v] < key[v]) {
+                key[v] = graph[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+
+    printf("Edges in MST:\n");
+
+    for (int i = 1; i < n; i++) {
+        printf("%d - %d : %d\n", parent[i], i, key[i]);
+        total += key[i];
+    }
+
+    printf("Total MST cost: %d\n", total);
+
+    return 0;
+}
