@@ -1,0 +1,85 @@
+
+#include <stdio.h>
+
+struct Edge {
+    int u, v, w;
+};
+
+int parent[100];
+
+int findParent(int x) {
+    if (parent[x] != x)
+        parent[x] = findParent(parent[x]);
+
+    return parent[x];
+}
+
+void sortEdges(struct Edge e[], int m) {
+    for (int i = 0; i < m - 1; i++) {
+        for (int j = 0; j < m - i - 1; j++) {
+            if (e[j].w > e[j + 1].w) {
+                struct Edge t = e[j];
+                e[j] = e[j + 1];
+                e[j + 1] = t;
+            }
+        }
+    }
+}
+
+int main() {
+    struct Edge e[500];
+    int n, m, count = 0, total = 0;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > 100) {
+        printf("Invalid number of vertices");
+        return 0;
+    }
+
+    printf("Enter number of edges: ");
+    scanf("%d", &m);
+
+    if (m < 0 || m > 500) {
+        printf("Invalid number of edges");
+        return 0;
+    }
+
+    for (int i = 0; i < m; i++) {
+        printf("Enter edge (u v weight): ");
+        scanf("%d %d %d", &e[i].u, &e[i].v, &e[i].w);
+
+        if (e[i].u < 0 || e[i].u >= n ||
+            e[i].v < 0 || e[i].v >= n) {
+            printf("Invalid vertex");
+            return 0;
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+        parent[i] = i;
+
+    sortEdges(e, m);
+
+    printf("Edges in MST:\n");
+
+    for (int i = 0; i < m && count < n - 1; i++) {
+        int a = findParent(e[i].u);
+        int b = findParent(e[i].v);
+
+        if (a != b) {
+            printf("%d - %d : %d\n", e[i].u, e[i].v, e[i].w);
+            parent[a] = b;
+            total += e[i].w;
+            count++;
+        }
+    }
+
+    if (count != n - 1)
+        printf("Graph is disconnected\n");
+    else
+        printf("Total MST cost: %d\n", total);
+
+    return 0;
+}
