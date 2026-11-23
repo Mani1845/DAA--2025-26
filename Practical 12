@@ -1,0 +1,68 @@
+
+#include <stdio.h>
+#include <limits.h>
+
+int cost[15][15];
+int dp[1 << 15][15];
+int n;
+
+int tsp(int mask, int pos) {
+    if (mask == (1 << n) - 1) {
+        if (cost[pos][0] == 0)
+            return INT_MAX;
+
+        return cost[pos][0];
+    }
+
+    if (dp[mask][pos] != -1)
+        return dp[mask][pos];
+
+    int ans = INT_MAX;
+
+    for (int city = 0; city < n; city++) {
+        if (!(mask & (1 << city)) && cost[pos][city] != 0) {
+            int next = tsp(mask | (1 << city), city);
+
+            if (next != INT_MAX &&
+                cost[pos][city] <= INT_MAX - next) {
+                int value = cost[pos][city] + next;
+
+                if (value < ans)
+                    ans = value;
+            }
+        }
+    }
+
+    return dp[mask][pos] = ans;
+}
+
+int main() {
+    printf("Enter number of cities (2 to 15): ");
+    scanf("%d", &n);
+
+    if (n < 2 || n > 15) {
+        printf("Invalid number of cities");
+        return 0;
+    }
+
+    printf("Enter cost matrix (0 for no edge):\n");
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            scanf("%d", &cost[i][j]);
+    }
+
+    for (int i = 0; i < (1 << n); i++) {
+        for (int j = 0; j < n; j++)
+            dp[i][j] = -1;
+    }
+
+    int answer = tsp(1, 0);
+
+    if (answer == INT_MAX)
+        printf("No complete tour exists");
+    else
+        printf("Minimum tour cost: %d\n", answer);
+
+    return 0;
+}
