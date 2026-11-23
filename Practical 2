@@ -1,0 +1,61 @@
+
+#include <stdio.h>
+
+int linearSearch(int a[], int n, int key) {
+    for (int i = 0; i < n; i++) {
+        if (a[i] == key)
+            return i;
+    }
+    return -1;
+}
+
+int binarySearch(int a[], int n, int key) {
+    int low = 0, high = n - 1;
+
+    while (low <= high) {
+        int mid = (low + high) / 2;
+
+        if (a[mid] == key)
+            return mid;
+        else if (a[mid] < key)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+
+    return -1;
+}
+
+int main() {
+    int a[100], n, key;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > 100) {
+        printf("Invalid size");
+        return 0;
+    }
+
+    printf("Enter elements in sorted order: ");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter element to search: ");
+    scanf("%d", &key);
+
+    int x = linearSearch(a, n, key);
+    int y = binarySearch(a, n, key);
+
+    if (x != -1)
+        printf("Linear Search: Found at index %d\n", x);
+    else
+        printf("Linear Search: Not found\n");
+
+    if (y != -1)
+        printf("Binary Search: Found at index %d\n", y);
+    else
+        printf("Binary Search: Not found\n");
+
+    return 0;
+}
