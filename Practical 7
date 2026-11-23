@@ -1,0 +1,56 @@
+
+#include <stdio.h>
+#include <limits.h>
+
+int main() {
+    int coins[100];
+    int dp[10001];
+    int n, amount;
+
+    printf("Enter number of coin types: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > 100) {
+        printf("Invalid number of coins");
+        return 0;
+    }
+
+    printf("Enter coin values: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &coins[i]);
+
+        if (coins[i] <= 0) {
+            printf("Coin values must be positive");
+            return 0;
+        }
+    }
+
+    printf("Enter amount (0 to 10000): ");
+    scanf("%d", &amount);
+
+    if (amount < 0 || amount > 10000) {
+        printf("Invalid amount");
+        return 0;
+    }
+
+    dp[0] = 0;
+
+    for (int i = 1; i <= amount; i++)
+        dp[i] = INT_MAX;
+
+    for (int i = 1; i <= amount; i++) {
+        for (int j = 0; j < n; j++) {
+            if (coins[j] <= i && dp[i - coins[j]] != INT_MAX) {
+                if (dp[i - coins[j]] + 1 < dp[i])
+                    dp[i] = dp[i - coins[j]] + 1;
+            }
+        }
+    }
+
+    if (dp[amount] == INT_MAX)
+        printf("Change cannot be made");
+    else
+        printf("Minimum coins required: %d\n", dp[amount]);
+
+    return 0;
+}
